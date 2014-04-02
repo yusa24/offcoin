@@ -1,0 +1,5 @@
+default live
+label live
+  say Booting an Ubuntu Live session...
+  kernel /casper/vmlinuz.efi
+  append  file=/cdrom/preseed/ubuntu.seed boot=casper persistent initrd=/casper/initrd.lz quiet splash noprompt --
