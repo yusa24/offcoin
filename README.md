@@ -1,4 +1,10 @@
-# README
+=======
+offcoin
+=======
+
+setup offline ubuntu with armory on mac osx
+
+# NOTES
 function to verify file and provided hash
 verify all zips/deb packages before use
 
