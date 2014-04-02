@@ -4,7 +4,7 @@ offcoin
 
 setup offline ubuntu with armory on mac osx
 
-# NOTES
+## NOTES
 function to verify file and provided hash
 verify all zips/deb packages before use
 
@@ -90,7 +90,7 @@ mount encrypted volume
 Because we are operating offline we eliminate a lot of potential attack vectors but we are not immune to theft or the system becoming compromised. For this purpose encryption becomes the backbone of our security effort and hinges on choosing a strong passphrase!
 
 
-# TODO
+### TODO
 combine chrome, bitaddress, vanitygen etc, into a 'bitcoin tools' folder under ~/bitcoin/tools/ etc.
 
 https://en.bitcoin.it/wiki/Vanitygen
