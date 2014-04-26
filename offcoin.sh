@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # offcoin.sh
-# set up the offline ubuntu instance and some dependencies
+# collect offcoin from remote source
+# verify dependencies
+# setup bootable ubuntu on flash drive
 
 VERSION="0.1";
 
@@ -47,11 +49,10 @@ fi
 
 
 
-
 # Lest we forget to do a few additional things...
-if [[ "$new_offcoin_install" && -e "conf/firsttime_reminder.sh" ]]; then
+if [[ -e "./utils/reminder.sh" ]]; then
   e_header "First-Time Reminders"
-  bash -c 'source conf/firsttime_reminder.sh'
+  . utils/reminder.sh
 fi
 
 # All done!

@@ -78,7 +78,8 @@ restart and hold option key down
 
 run setup-offline.sh
 
-enter password (wolfram alpha password entropy bits)
+enter password (aside mentioning wolfram alpha password entropy bits for education of reader)
+
 if you wish, enter a keyfile path, although it is essentially adding another password onto your encrypted volume, and you will need it, in addition to your password, each time you decrypt your drive. i opt for no keyfile because I have a long secure password but I imagine there are some interesting applications such as using a system file or a zipped set of system files to ensure in order to decrypt the volume the system must have the same set of files in place as upon creation (e.g. password files)
 type random characters used for the truecrypt random number generator (RNG). RNG is used to generate the master encryption key, among other things.
 
