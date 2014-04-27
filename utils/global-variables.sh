@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 VERSION="0.1";
 
@@ -17,3 +17,18 @@ OFFCOIN_DIR=".offcointest";
 # OFFCOIN_DIR=".offcoin";
 OFFCOIN_PATH="$UBUNTU_HOME_PATH/$OFFCOIN_DIR";
 OFFCOIN_LOGS="$OFFCOIN_PATH/logs";
+OFFCOIN_TOOLS="$OFFCOIN_PATH/tools";
+OFFCOIN_BITCOIN="$OFFCOIN_PATH/bitcoin";
+
+# Tools (install)
+OFFCOIN_TOOLS_TMP="$OFFCOIN_TOOLS/tmp";
+
+# Armory
+ARMORYCLIENT_PATH="/usr/lib/armory/ArmoryQt.py";
+ARMORYCLIENT="python $ARMORYCLIENT_PATH --offline";
+
+# Bitcoin Safe
+OFFCOIN_SAFE="$OFFCOIN_BITCOIN/bitcoin.safe"
+
+# Truecrypt
+TRUECRYPT_MOUNT_POINT="/media/truecrypt-bitcoin-safe";

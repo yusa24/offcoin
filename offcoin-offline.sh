@@ -1,7 +1,13 @@
-#!/bin/bash
+#!/bin/bash -e
+# turn -x on if DEBUG is set to a non-empty string
+# 'export DEBUG=1' to debug, 'export DEBUG=' to disable
+[ -n "$DEBUG" ] && set -x
 
+############################################
 # offcoin-offline.sh
+############################################
 # set up the offline ubuntu instance
+############################################
 
 # Get script location for relative directory references
 DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
@@ -20,116 +26,140 @@ e_header "offcoin-offline :: v$VERSION"
 # while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 
-# echo "Taking you off the grid..."
+# e_header "Taking you off the grid, permanently."
 # if nmcli nm enable false 2> /dev/null; then
-# 	echo "Networking successfully disabled."
+# 	e_success "Networking successfully disabled."
 # else
-# 	echo "Networked already disabled."
+# 	e_error "Unable to disable networking."
+# 	exit 1
 # fi
 
 # Ensure offcoin is in $HOME before proceeding
+e_header "Create offcoin in local directory"
 if [[ ! -d $OFFCOIN_PATH ]]; then
 	# ~/.offcoin doesn't exist? Copy it!
 	e_arrow "Copying offcoin to $OFFCOIN_PATH"
 	cp -r ../offcoin $OFFCOIN_PATH
+	e_success "Finished copying."
 else
 	e_success "$OFFCOIN_PATH exists"
 fi
+
+
+# Move into copied offcoin path
 cd $OFFCOIN_PATH
 
-# $OFFCOIN_PATH/scripts/startup.sh
 
-
-# STARTUPSCRIPT="sudo -u $(whoami) $HOME/startup/startup.sh";
-# # copy startup.sh to local startup dir
-# if mkdir -p ~/startup && cp startup.sh ~/startup && chmod +x ~/startup/startup.sh; then
-# 	echo "startup.sh copied to local startup directory"
-# else
-# 	echo "Error copying startup.sh to local startup directory"
-# 	exit 1
-# fi
-#
 # # grep for startup script in rc.local, append >> if absent
+# e_header "Setup startup.sh to run on boot"
+# STARTUPSCRIPT="sudo -u $(whoami) $OFFCOIN_PATH/scripts/startup.sh";
 # if grep -sq "$STARTUPSCRIPT" /etc/rc.local; then
-# 	echo "startup.sh previously installed."
+# 	e_success "startup.sh previously installed."
 # else
-# 	echo "Appending startup.sh to /etc/rc.local to run on boot..."
+# 	e_arrow "Appending startup.sh to /etc/rc.local to run on boot"
 # 	# find 'exit 0' and replace with call to startup script
 # 	sudo sed -i 's/exit 0//g' /etc/rc.local
 # 	echo "# $(date) -- setup-offline.sh -- startup.sh installation
 # $STARTUPSCRIPT
 # exit 0" | sudo tee -a /etc/rc.local 1> /dev/null
+# 	e_success "Modified /etc/rc.local to run startup.sh on boot"
 # fi
-#
-#
+
+
 # # Fix Mac keyboard mappings
-# echo "Fixing tilde key on Mac keyboard..."
+# e_header "Fixing \` & ~ key on Mac keyboard"
 # echo 'keycode 94 = grave asciitilde' > $HOME/.Xmodmap
 # TILDEFIXCMD="xmodmap ~/.Xmodmap";
 # echo $TILDEFIXCMD > $HOME/.xinitrc
+# e_arrow "Loading new xmodmap configuration"
 # xmodmap ~/.Xmodmap
-#
-#
-#
-# # verify all packages again, truecrypt, armory/etc
-# # copy to home directory and extract/install
-#
-# # check if truecrypt installed
-# if hash truecrypt 2> /dev/null; then
-# 	echo "Truecrypt installed."
-# else
-# 	echo "Installing truecrypt..."
-# 	#cd ~/bitcoin
-# 	#tar -xvf $(ls truecrypt*)
-# 	#./$(ls truecrypt*setup*)
-# fi
-#
-# ARMORYCLIENTPATH="/usr/lib/armory/ArmoryQt.py";
-# ARMORYCLIENT="python $ARMORYCLIENTPATH --offline";
-#
-# # check if armory installed
-# if [ -e $ARMORYCLIENTPATH ]; then
-# 	echo "Armory installed."
-# else
-# 	echo "Installing armory..."
-# 	#cd ~/bitcoin
-# 	#tar -xvf $(ls armory*)
-# 	#cd $(ls -d armory*)
-# 	#./$(*.sh)
-# fi
-#
-# if [ -e ~/bitcoin/bitcoin.safe ]; then
-# 	echo "bitcoin.safe already exists."
-# else
-# 	echo "Initializing encrypted volume (~/bitcoin/bitcoin.safe)..."
-# 	truecrypt -t -v -c --volume-type=normal --size=$((1024*1024*1024)) --encryption=AES --hash=RIPEMD-160 --filesystem=FAT --random-source=/dev/urandom ~/bitcoin/bitcoin.safe
-# 	if [ $? != 0 ]; then
-# 		echo "Error during truecrypt volume creation."
-# 		exit 1
-# 	fi
-# fi
-#
-# #unmount anything on the target
-# #send output to /dev/null to keep output clean
-# truecrypt -t -d /media/truecrypt-bitcoin-safe
-# truecrypt -t -d ~/bitcoin/bitcoin.safe
-#
-# echo "Mounting encrypted volume..."
-# truecrypt -t -v --mount ~/bitcoin/bitcoin.safe /media/truecrypt-bitcoin-safe
-# if [ $? != 0 ]; then
-# 	echo "Error during initial mount of encrypted volume."
-# 	exit 1
-# fi
-#
-#
-# #create armory startup icon on desktop with armory.sh command
-#
-# #call armory.sh script
-# #mounts encrypted volume & starts offline armory with datadir
-#
-# #start armory client offline mode, datadir encrypted volume
-# $ARMORYCLIENT --datadir=/media/truecrypt-bitcoin-safe
-#
-#
-# #echo "Unmounting encrypted volume..."
-# #truecrypt -d ~/bitcoin/bitcoin.safe
+# e_success "Loaded new xmodmap (fixed ~ and \` key)"
+
+
+
+
+# TODO: Verify all packages again, truecrypt, armory/etc
+
+# check if truecrypt installed
+e_header "truecrypt install"
+if hash truecrypt 2> /dev/null; then
+	e_success "truecrypt installed."
+else
+	e_arrow "Creating tmp directory for extracted files"
+	mkdir -p $OFFCOIN_TOOLS_TMP
+	e_arrow "Copying truecrypt tarball to tmp directory"
+	cd $OFFCOIN_TOOLS
+	cp $(ls truecrypt*) $OFFCOIN_TOOLS_TMP
+	cd $OFFCOIN_TOOLS_TMP
+	e_arrow "Extracting truecrypt tarball..."
+	tar -xvf $(ls truecrypt*)
+	e_arrow "Installing truecrypt..."
+	./$(ls truecrypt*setup*)
+	e_arrow "Cleaning up tmp directory for extracted files"
+	cd $OFFCOIN_PATH
+	rm -rf $OFFCOIN_TOOLS_TMP
+	e_success "truecrypt installed."
+fi
+
+# check if armory installed
+e_header "truecrypt install"
+if [ -e $ARMORYCLIENTPATH ]; then
+	e_success "Armory installed."
+else
+	e_arrow "Creating tmp directory for extracted files"
+	mkdir -p $OFFCOIN_TOOLS_TMP
+	e_arrow "Copying Armory tarball to tmp directory"
+	cd $OFFCOIN_TOOLS
+	cp $(ls armory*) $OFFCOIN_TOOLS_TMP
+	cd $OFFCOIN_TOOLS_TMP
+	e_arrow "Extracting Armory tarball..."
+	tar -xvf $(ls armory*)
+	cd $(ls -d armory*)
+	e_arrow "Installing Armory..."
+	./$(*.sh)
+	e_arrow "Cleaning up tmp directory for extracted files"
+	cd $OFFCOIN_PATH
+	rm -rf $OFFCOIN_TOOLS_TMP
+	e_success "Armory installed."
+fi
+
+
+
+e_header "truecrypt bitcoin safe"
+if [ -e $OFFCOIN_SAFE ]; then
+	e_success "bitcoin safe already exists ($OFFCOIN_SAFE)"
+else
+	e_arrow "Creating bitcoin directory ($OFFCOIN_BITCOIN)"
+	mkdir -p $OFFCOIN_BITCOIN
+	e_arrow "Initializing encrypted volume ($OFFCOIN_SAFE)..."
+	truecrypt -t -v -c --volume-type=normal --size=$((1024*1024*1024)) --encryption=AES --hash=RIPEMD-160 --filesystem=FAT --random-source=/dev/urandom ~/bitcoin/bitcoin.safe
+	if [ $? != 0 ]; then
+		e_arrow "Error during truecrypt volume creation"
+		exit 1
+	fi
+fi
+
+
+e_header "Mount $OFFCOIN_SAFE"
+
+e_arrow "unmount anything on the target"
+# TODO: Send output to /dev/null to keep output clean & '|| true' to ignore error
+truecrypt -t -d $TRUECRYPT_MOUNT_POINT
+truecrypt -t -d $OFFCOIN_SAFE
+
+e_arrow "Mounting encrypted volume..."
+truecrypt -t -v --mount $OFFCOIN_SAFE $TRUECRYPT_MOUNT_POINT
+if [ $? != 0 ]; then
+	e_error "Error during initial mount of encrypted volume."
+	exit 1
+fi
+
+e_arrow "Unmounting encrypted volume..."
+truecrypt -d $OFFCOIN_SAFE
+
+# TODO: Create armory startup icon on desktop with armory.sh command
+
+# TODO: Call armory.sh script
+	# # mounts encrypted volume & starts offline armory with datadir
+	# # start armory client offline mode, datadir encrypted volume
+	# $ARMORYCLIENT --datadir=/media/truecrypt-bitcoin-safe

@@ -1,3 +1,4 @@
+#!/bin/bash -e
 # This file is sourced at the end of an offcoin install
 
 cat <<EOF

@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/bash -e
+# turn -x on if DEBUG is set to a non-empty string
+[ -n "$DEBUG" ] && set -x
 
 # offcoin.sh
 # collect offcoin from remote source

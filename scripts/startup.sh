@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # Get script location for relative directory references
 DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
