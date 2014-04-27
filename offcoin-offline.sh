@@ -26,13 +26,13 @@ e_header "offcoin-offline :: v$VERSION"
 # while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 
-# e_header "Taking you off the grid, permanently."
-# if nmcli nm enable false 2> /dev/null; then
-# 	e_success "Networking successfully disabled."
-# else
-# 	e_error "Unable to disable networking."
-# 	exit 1
-# fi
+e_header "Taking you off the grid, permanently."
+if nmcli nm enable false 2> /dev/null; then
+	e_success "Networking successfully disabled."
+else
+	e_error "Unable to disable networking."
+	exit 1
+fi
 
 # Ensure offcoin is in $HOME before proceeding
 e_header "Create offcoin in local directory"
@@ -50,30 +50,30 @@ fi
 cd $OFFCOIN_PATH
 
 
-# # grep for startup script in rc.local, append >> if absent
-# e_header "Setup startup.sh to run on boot"
-# STARTUPSCRIPT="sudo -u $(whoami) $OFFCOIN_PATH/scripts/startup.sh";
-# if grep -sq "$STARTUPSCRIPT" /etc/rc.local; then
-# 	e_success "startup.sh previously installed."
-# else
-# 	e_arrow "Appending startup.sh to /etc/rc.local to run on boot"
-# 	# find 'exit 0' and replace with call to startup script
-# 	sudo sed -i 's/exit 0//g' /etc/rc.local
-# 	echo "# $(date) -- setup-offline.sh -- startup.sh installation
-# $STARTUPSCRIPT
-# exit 0" | sudo tee -a /etc/rc.local 1> /dev/null
-# 	e_success "Modified /etc/rc.local to run startup.sh on boot"
-# fi
+# grep for startup script in rc.local, append >> if absent
+e_header "Setup startup.sh to run on boot"
+STARTUPSCRIPT="sudo -u $(whoami) $OFFCOIN_PATH/scripts/startup.sh";
+if grep -sq "$STARTUPSCRIPT" /etc/rc.local; then
+	e_success "startup.sh previously installed."
+else
+	e_arrow "Appending startup.sh to /etc/rc.local to run on boot"
+	#find 'exit 0' and replace with call to startup script
+	sudo sed -i 's/exit 0//g' /etc/rc.local
+	echo "# $(date) -- setup-offline.sh -- startup.sh installation
+$STARTUPSCRIPT
+exit 0" | sudo tee -a /etc/rc.local 1> /dev/null
+	e_success "Modified /etc/rc.local to run startup.sh on boot"
+fi
 
 
-# # Fix Mac keyboard mappings
-# e_header "Fixing \` & ~ key on Mac keyboard"
-# echo 'keycode 94 = grave asciitilde' > $HOME/.Xmodmap
-# TILDEFIXCMD="xmodmap ~/.Xmodmap";
-# echo $TILDEFIXCMD > $HOME/.xinitrc
-# e_arrow "Loading new xmodmap configuration"
-# xmodmap ~/.Xmodmap
-# e_success "Loaded new xmodmap (fixed ~ and \` key)"
+# Fix Mac keyboard mappings
+e_header "Fixing \` & ~ key on Mac keyboard"
+echo 'keycode 94 = grave asciitilde' > $HOME/.Xmodmap
+TILDEFIXCMD="xmodmap ~/.Xmodmap";
+echo $TILDEFIXCMD > $HOME/.xinitrc
+e_arrow "Loading new xmodmap configuration"
+xmodmap ~/.Xmodmap
+e_success "Loaded new xmodmap (fixed ~ and \` key)"
 
 
 
@@ -81,7 +81,7 @@ cd $OFFCOIN_PATH
 # TODO: Verify all packages again, truecrypt, armory/etc
 
 # check if truecrypt installed
-e_header "truecrypt install"
+e_header "Install truecrypt"
 if hash truecrypt 2> /dev/null; then
 	e_success "truecrypt installed."
 else
@@ -102,8 +102,8 @@ else
 fi
 
 # check if armory installed
-e_header "truecrypt install"
-if [ -e $ARMORYCLIENTPATH ]; then
+e_header "Install Armory"
+if [ -e $ARMORY_PATH ]; then
 	e_success "Armory installed."
 else
 	e_arrow "Creating tmp directory for extracted files"
@@ -125,7 +125,7 @@ fi
 
 
 
-e_header "truecrypt bitcoin safe"
+e_header "Initialize truecrypt bitcoin safe"
 if [ -e $OFFCOIN_SAFE ]; then
 	e_success "bitcoin safe already exists ($OFFCOIN_SAFE)"
 else
@@ -137,12 +137,13 @@ else
 		e_arrow "Error during truecrypt volume creation"
 		exit 1
 	fi
+	e_success "Bitcoin safe created"
 fi
 
 
 e_header "Mount $OFFCOIN_SAFE"
 
-e_arrow "unmount anything on the target"
+e_arrow "Unmount anything on the target"
 # TODO: Send output to /dev/null to keep output clean & '|| true' to ignore error
 truecrypt -t -d $TRUECRYPT_MOUNT_POINT
 truecrypt -t -d $OFFCOIN_SAFE
@@ -162,4 +163,4 @@ truecrypt -d $OFFCOIN_SAFE
 # TODO: Call armory.sh script
 	# # mounts encrypted volume & starts offline armory with datadir
 	# # start armory client offline mode, datadir encrypted volume
-	# $ARMORYCLIENT --datadir=/media/truecrypt-bitcoin-safe
+	# $ARMORY_CLIENT --datadir=/media/truecrypt-bitcoin-safe

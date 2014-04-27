@@ -24,8 +24,8 @@ OFFCOIN_BITCOIN="$OFFCOIN_PATH/bitcoin";
 OFFCOIN_TOOLS_TMP="$OFFCOIN_TOOLS/tmp";
 
 # Armory
-ARMORYCLIENT_PATH="/usr/lib/armory/ArmoryQt.py";
-ARMORYCLIENT="python $ARMORYCLIENT_PATH --offline";
+ARMORY_PATH="/usr/lib/armory/ArmoryQt.py";
+ARMORY_CLIENT="python $ARMORYCLIENT_PATH --offline";
 
 # Bitcoin Safe
 OFFCOIN_SAFE="$OFFCOIN_BITCOIN/bitcoin.safe"
