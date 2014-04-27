@@ -89,12 +89,3 @@ mount encrypted volume
 
 
 Because we are operating offline we eliminate a lot of potential attack vectors but we are not immune to theft or the system becoming compromised. For this purpose encryption becomes the backbone of our security effort and hinges on choosing a strong passphrase!
-
-
-### Todo
-combine chrome, bitaddress, vanitygen etc, into a 'bitcoin tools' folder under ~/bitcoin/tools/ etc.
-
-https://en.bitcoin.it/wiki/Vanitygen
-
-unmount all drives on shutdown
-https://wiki.archlinux.org/index.php/TrueCrypt#Safely_unmount_and_unmap_volumes_.28on_shutdown.29

@@ -9,11 +9,14 @@ function e_arrow()    { echo -e "  \033[1;33m ➜\033[0m  $@"; };
 
 
 # osx testing
-UBUNTU_HOME_PATH="/Users/noah";
 OFFCOIN_DIR=".offcointest";
 
-# UBUNTU_HOME_PATH="/home/ubuntu";
+# Ubuntu
+UBUNTU_HOME_PATH="$HOME";
+ETC_RC6_PATH="/etc/rc6.d";
+ETC_RC_SHUTDOWN="/etc/rc.local.shutdown";
 
+# offcoin
 # OFFCOIN_DIR=".offcoin";
 OFFCOIN_PATH="$UBUNTU_HOME_PATH/$OFFCOIN_DIR";
 OFFCOIN_LOGS="$OFFCOIN_PATH/logs";

@@ -10,7 +10,8 @@
 [ -n "$DEBUG" ] && set -x
 ############################################
 
-# Get script location for relative directory references
+# Get script name and location for relative directory references
+THIS_SCRIPT="$(basename $0)";
 DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
 
 # Import global variables
@@ -60,56 +61,56 @@ else
 	e_arrow "Appending startup.sh to /etc/rc.local"
 	#find 'exit 0' and replace with call to startup script
 	sudo sed -i 's/exit 0//g' /etc/rc.local
-	echo "# $(date) -- setup-offline.sh -- startup.sh installation
+	echo "# $(date) -- $THIS_SCRIPT -- startup.sh installation
 $STARTUPSCRIPT
 exit 0" | sudo tee -a /etc/rc.local 1> /dev/null
 	e_success "Modified /etc/rc.local to run startup.sh on boot"
 fi
 
-# grep for shutdown script in /etc/rc.local.shutdown
+# grep for shutdown script in $ETC_RC_SHUTDOWN
 e_header "Setup shutdown.sh to run on shutdown"
-if [ ! -e /etc/rc.local.shutdown ]; then
-	e_arrow "Creating /etc/rc.local.shutdown"
-	echo "exit 0" | sudo tee -a /etc/rc.local.shutdown 1> /dev/null
-	e_success "/etc/rc.local.shutdown created"
+if [ ! -e $ETC_RC_SHUTDOWN ]; then
+	e_arrow "Creating $ETC_RC_SHUTDOWN"
+	echo "exit 0" | sudo tee -a $ETC_RC_SHUTDOWN 1> /dev/null
+	e_success "$ETC_RC_SHUTDOWN created"
 fi
 SHUTDOWN_SCRIPT="sudo -u $(whoami) $OFFCOIN_PATH/scripts/shutdown.sh";
-if grep -sq "$SHUTDOWN_SCRIPT" /etc/rc.local.shutdown; then
-	e_success "shutdown.sh previously installed in /etc/rc.local.shutdown"
+if grep -sq "$SHUTDOWN_SCRIPT" $ETC_RC_SHUTDOWN; then
+	e_success "shutdown.sh previously installed in $ETC_RC_SHUTDOWN"
 else
-	e_arrow "Appending shutdown.sh to /etc/rc.local.shutdown"
+	e_arrow "Appending shutdown.sh to $ETC_RC_SHUTDOWN"
 	#find 'exit 0' and replace with call to startup script
-	sudo sed -i 's/exit 0//g' /etc/rc.local.shutdown
-	echo "# $(date) -- setup-offline.sh -- shutdown.sh installation
+	sudo sed -i 's/exit 0//g' $ETC_RC_SHUTDOWN
+	echo "# $(date) -- $THIS_SCRIPT -- shutdown.sh installation
 $STARTUPSCRIPT
-exit 0" | sudo tee -a /etc/rc.local.shutdown 1> /dev/null
-	e_success "Modified /etc/rc.local.shutdown to run shutdown.sh on shutdown"
+exit 0" | sudo tee -a $ETC_RC_SHUTDOWN 1> /dev/null
+	e_success "Modified $ETC_RC_SHUTDOWN to run shutdown.sh on shutdown"
 fi
 
-# add shutdown.sh into /etc/rc6.d
-if [ -e /etc/rc6.d/K99_shutdown.sh ]; then
-	e_success "shutdown.sh previously installed in /etc/rc6.d (/etc/rc6.d/K99_shutdown.sh)"
+# add shutdown.sh into $ETC_RC6_PATH
+if [ -e $ETC_RC6_PATH/K99_shutdown.sh ]; then
+	e_success "shutdown.sh previously installed in $ETC_RC6_PATH ($ETC_RC6_PATH/K99_shutdown.sh)"
 else
-	if [ ! -d /etc/rc6.d ]; then
-		e_error "/etc/rc6.d does not exist"
-		e_arrow "Creating /etc/rc6.d"
-		mkdir -p /etc/rc6.d
-		e_success "Created /etc/rc6.d"
+	if [ ! -d $ETC_RC6_PATH ]; then
+		e_error "$ETC_RC6_PATH does not exist"
+		e_arrow "Creating $ETC_RC6_PATH"
+		mkdir -p $ETC_RC6_PATH
+		e_success "Created $ETC_RC6_PATH"
 	fi
-	e_arrow "Adding shutdown script to /etc/rc6.d"
-	cp $OFFCOIN_PATH/scripts/shutdown.sh /etc/rc6.d/K99_shutdown.sh
-	chmod +x /etc/rc6.d/K99_shutdown.sh
-	e_success "shutdown.sh added to /etc/rc6.d"
+	e_arrow "Adding shutdown script to $ETC_RC6_PATH"
+	cp $OFFCOIN_PATH/scripts/shutdown.sh $ETC_RC6_PATH/K99_shutdown.sh
+	chmod +x $ETC_RC6_PATH/K99_shutdown.sh
+	e_success "shutdown.sh added to $ETC_RC6_PATH"
 fi
 
 
 # Fix Mac keyboard mappings
 e_header "Fixing \` & ~ key on Mac keyboard"
-echo 'keycode 94 = grave asciitilde' > $HOME/.Xmodmap
+echo 'keycode 94 = grave asciitilde' > $UBUNTU_HOME_PATH/.Xmodmap
 TILDEFIXCMD="xmodmap ~/.Xmodmap";
-echo $TILDEFIXCMD > $HOME/.xinitrc
+echo $TILDEFIXCMD > $UBUNTU_HOME_PATH/.xinitrc
 e_arrow "Loading new xmodmap configuration"
-xmodmap ~/.Xmodmap
+xmodmap $UBUNTU_HOME_PATH/.Xmodmap
 e_success "Loaded new xmodmap (fixed ~ and \` key)"
 
 
@@ -159,13 +160,20 @@ else
 fi
 
 
+e_header "Bitcoin Home Directory"
+e_arrow "Creating bitcoin directory ($OFFCOIN_BITCOIN)"
+mkdir -p $OFFCOIN_BITCOIN
+e_success "Created bitcoin directory"
+
+
+# TODO: copy tools (e.g. vanitygen, bitaddress, etc.) here for user
+# TODO: symlink shortcut to ~/bitcoin on desktop
+# # https://en.bitcoin.it/wiki/Vanitygen
 
 e_header "Initialize truecrypt bitcoin safe"
 if [ -e $OFFCOIN_SAFE ]; then
 	e_success "bitcoin safe already exists ($OFFCOIN_SAFE)"
 else
-	e_arrow "Creating bitcoin directory ($OFFCOIN_BITCOIN)"
-	mkdir -p $OFFCOIN_BITCOIN
 	e_arrow "Initializing encrypted volume ($OFFCOIN_SAFE)..."
 	truecrypt -t -v -c --volume-type=normal --size=$((1024*1024*1024)) --encryption=AES --hash=RIPEMD-160 --filesystem=FAT --random-source=/dev/urandom ~/bitcoin/bitcoin.safe
 	if [ $? != 0 ]; then
