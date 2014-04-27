@@ -1,11 +1,16 @@
 #!/bin/bash -e
-# turn -x on if DEBUG is set to a non-empty string
-[ -n "$DEBUG" ] && set -x
 
+############################################
 # offcoin.sh
+############################################
 # collect offcoin from remote source
 # verify dependencies
 # setup bootable ubuntu on flash drive
+############################################
+# turn -x on if DEBUG is set to a non-empty string
+# 'export DEBUG=1' to debug, 'export DEBUG=' to disable
+[ -n "$DEBUG" ] && set -x
+############################################
 
 VERSION="0.1";
 

@@ -1,12 +1,13 @@
 #!/bin/bash -e
-# turn -x on if DEBUG is set to a non-empty string
-# 'export DEBUG=1' to debug, 'export DEBUG=' to disable
-[ -n "$DEBUG" ] && set -x
 
 ############################################
 # offcoin-offline.sh
 ############################################
 # set up the offline ubuntu instance
+############################################
+# turn -x on if DEBUG is set to a non-empty string
+# 'export DEBUG=1' to debug, 'export DEBUG=' to disable
+[ -n "$DEBUG" ] && set -x
 ############################################
 
 # Get script location for relative directory references
