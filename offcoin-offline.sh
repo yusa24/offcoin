@@ -51,19 +51,55 @@ fi
 cd $OFFCOIN_PATH
 
 
-# grep for startup script in rc.local, append >> if absent
+# grep for startup script in /etc/rc.local, append >> if absent
 e_header "Setup startup.sh to run on boot"
 STARTUPSCRIPT="sudo -u $(whoami) $OFFCOIN_PATH/scripts/startup.sh";
 if grep -sq "$STARTUPSCRIPT" /etc/rc.local; then
 	e_success "startup.sh previously installed."
 else
-	e_arrow "Appending startup.sh to /etc/rc.local to run on boot"
+	e_arrow "Appending startup.sh to /etc/rc.local"
 	#find 'exit 0' and replace with call to startup script
 	sudo sed -i 's/exit 0//g' /etc/rc.local
 	echo "# $(date) -- setup-offline.sh -- startup.sh installation
 $STARTUPSCRIPT
 exit 0" | sudo tee -a /etc/rc.local 1> /dev/null
 	e_success "Modified /etc/rc.local to run startup.sh on boot"
+fi
+
+# grep for shutdown script in /etc/rc.local.shutdown
+e_header "Setup shutdown.sh to run on shutdown"
+if [ ! -e /etc/rc.local.shutdown ]; then
+	e_arrow "Creating /etc/rc.local.shutdown"
+	echo "exit 0" | sudo tee -a /etc/rc.local.shutdown 1> /dev/null
+	e_success "/etc/rc.local.shutdown created"
+fi
+SHUTDOWN_SCRIPT="sudo -u $(whoami) $OFFCOIN_PATH/scripts/shutdown.sh";
+if grep -sq "$SHUTDOWN_SCRIPT" /etc/rc.local.shutdown; then
+	e_success "shutdown.sh previously installed in /etc/rc.local.shutdown"
+else
+	e_arrow "Appending shutdown.sh to /etc/rc.local.shutdown"
+	#find 'exit 0' and replace with call to startup script
+	sudo sed -i 's/exit 0//g' /etc/rc.local.shutdown
+	echo "# $(date) -- setup-offline.sh -- shutdown.sh installation
+$STARTUPSCRIPT
+exit 0" | sudo tee -a /etc/rc.local.shutdown 1> /dev/null
+	e_success "Modified /etc/rc.local.shutdown to run shutdown.sh on shutdown"
+fi
+
+# add shutdown.sh into /etc/rc6.d
+if [ -e /etc/rc6.d/K99_shutdown.sh ]; then
+	e_success "shutdown.sh previously installed in /etc/rc6.d (/etc/rc6.d/K99_shutdown.sh)"
+else
+	if [ ! -d /etc/rc6.d ]; then
+		e_error "/etc/rc6.d does not exist"
+		e_arrow "Creating /etc/rc6.d"
+		mkdir -p /etc/rc6.d
+		e_success "Created /etc/rc6.d"
+	fi
+	e_arrow "Adding shutdown script to /etc/rc6.d"
+	cp $OFFCOIN_PATH/scripts/shutdown.sh /etc/rc6.d/K99_shutdown.sh
+	chmod +x /etc/rc6.d/K99_shutdown.sh
+	e_success "shutdown.sh added to /etc/rc6.d"
 fi
 
 
@@ -75,8 +111,6 @@ echo $TILDEFIXCMD > $HOME/.xinitrc
 e_arrow "Loading new xmodmap configuration"
 xmodmap ~/.Xmodmap
 e_success "Loaded new xmodmap (fixed ~ and \` key)"
-
-
 
 
 # TODO: Verify all packages again, truecrypt, armory/etc
