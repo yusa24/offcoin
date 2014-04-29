@@ -52,8 +52,10 @@ fi
 
 
 
-#do the heavy lifting, copy dem weights
+# Verify components e.g. tools/*
+. $OFFCOIN_PATH/scripts/verify-external.sh
 
+# TODO: Do the heavy lifting, copy dem weights
 
 
 # Lest we forget to do a few additional things...

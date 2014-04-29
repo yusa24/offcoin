@@ -14,8 +14,8 @@
 THIS_SCRIPT="$(basename $0)";
 DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
 
-# Import global variables
-. $DIR/utils/global-variables.sh
+# Import global variables and functions
+. $DIR/utils/globals.sh
 
 ## begin installation
 e_header "offcoin-offline :: v$VERSION"
