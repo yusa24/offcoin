@@ -5,15 +5,6 @@ offcoin
 setup offline ubuntu with armory on mac osx
 
 ## Install
-function to verify file and provided hash
-verify all zips/deb packages before use
-
-shasum -a 256 syslinux-6.02.zip
-6e150b0375edbf3ce019add912e73e67712b63911afb3af5b4951faf7cf3c5db
-
-
-md5 unetbootin-mac-585.zip
-e797fdd25f84503aac1241f41b63b924
 
 
 

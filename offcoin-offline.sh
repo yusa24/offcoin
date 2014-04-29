@@ -19,6 +19,7 @@ DIR="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )"
 
 ## begin installation
 e_header "offcoin-offline :: v$VERSION"
+. $DIR/utils/offcoin-art.sh
 
 # # ask for administrator password up front
 # echo && e_arrow "You may be prompted for your admin password ..."
