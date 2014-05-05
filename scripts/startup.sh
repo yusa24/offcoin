@@ -17,3 +17,5 @@ fi
 # Write run time
 mkdir -p $OFFCOIN_LOGS
 echo $(date) > $OFFCOIN_LOGS/lastruntime
+
+exit 0

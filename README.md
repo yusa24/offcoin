@@ -4,6 +4,13 @@ offcoin
 
 setup offline ubuntu with armory on mac osx
 
+## TODO
+
+* TODO: copy tools (e.g. vanitygen, bitaddress, etc.) here for user
+* TODO: symlink shortcut to ~/bitcoin on desktop
+* https://en.bitcoin.it/wiki/Vanitygen
+
+
 ## Install
 
 

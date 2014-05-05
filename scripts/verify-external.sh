@@ -24,3 +24,5 @@ if [ $(VerifyHash $tool sha256 $hashurl) ]; then
 else
   e_error 'Hashes do not match'
 fi
+
+exit 0

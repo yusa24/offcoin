@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Exec={{SCRIPT}}
+Name=Truecrypt Armory
+GenericName=Truecrypt Armory
+Comment=Run Armory within mounted truecrypt encrypted datadir
+Encoding=UTF-8
+Terminal=true
+Type=Application
+Categories=Qt;Finance;Security;Application;

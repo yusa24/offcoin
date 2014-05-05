@@ -167,9 +167,18 @@ mkdir -p $OFFCOIN_BITCOIN
 e_success "Created bitcoin directory"
 
 
+
+
+
+
 # TODO: copy tools (e.g. vanitygen, bitaddress, etc.) here for user
 # TODO: symlink shortcut to ~/bitcoin on desktop
 # # https://en.bitcoin.it/wiki/Vanitygen
+
+
+
+
+
 
 e_header "Initialize truecrypt bitcoin safe"
 if [ -e $OFFCOIN_SAFE ]; then
@@ -202,9 +211,12 @@ fi
 e_arrow "Unmounting encrypted volume..."
 truecrypt -d $OFFCOIN_SAFE
 
-# TODO: Create armory startup icon on desktop with armory.sh command
+e_header "Desktop shortcuts"
+e_arrow "Link ~/bitcoin to Desktop"
+ln -s $OFFCOIN_PATH $UBUNTU_HOME_PATH/Desktop/offcoin
+e_success "Linked $UBUNTU_HOME_PATH/Desktop/offcoin"
 
-# TODO: Call armory.sh script
-	# # mounts encrypted volume & starts offline armory with datadir
-	# # start armory client offline mode, datadir encrypted volume
-	# $ARMORY_CLIENT --datadir=/media/truecrypt-bitcoin-safe
+e_arrow "Copying Armory shortcut to Desktop"
+cp $OFFCOIN_PATH/utils/Armory.desktop $UBUNTU_HOME_PATH/Desktop/
+sed -i "s#{{SCRIPT}}#$OFFCOIN_ARMORY_SCRIPT#g" $UBUNTU_HOME_PATH/Desktop/Armory.desktop
+e_success "Linked $UBUNTU_HOME_PATH/Desktop/Armory.desktop"
