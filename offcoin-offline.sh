@@ -95,12 +95,12 @@ else
 	if [ ! -d $ETC_RC6_PATH ]; then
 		e_error "$ETC_RC6_PATH does not exist"
 		e_arrow "Creating $ETC_RC6_PATH"
-		mkdir -p $ETC_RC6_PATH
+		sudo mkdir -p $ETC_RC6_PATH
 		e_success "Created $ETC_RC6_PATH"
 	fi
 	e_arrow "Adding shutdown script to $ETC_RC6_PATH"
-	cp $OFFCOIN_PATH/scripts/shutdown.sh $ETC_RC6_PATH/K99_shutdown.sh
-	chmod +x $ETC_RC6_PATH/K99_shutdown.sh
+	sudo cp $OFFCOIN_PATH/scripts/shutdown.sh $ETC_RC6_PATH/K99_shutdown.sh
+	sudo chmod +x $ETC_RC6_PATH/K99_shutdown.sh
 	e_success "shutdown.sh added to $ETC_RC6_PATH"
 fi
 
@@ -162,10 +162,11 @@ fi
 
 
 e_header "Bitcoin Home Directory"
-e_arrow "Creating bitcoin directory ($OFFCOIN_BITCOIN)"
-mkdir -p $OFFCOIN_BITCOIN
-e_success "Created bitcoin directory"
-
+if [ ! -d $OFFCOIN_BITCOIN ]; then
+	e_arrow "Creating bitcoin directory ($OFFCOIN_BITCOIN)"
+	mkdir -p $OFFCOIN_BITCOIN
+	e_success "Created bitcoin directory"
+fi
 
 
 
@@ -185,7 +186,7 @@ if [ -e $OFFCOIN_SAFE ]; then
 	e_success "bitcoin safe already exists ($OFFCOIN_SAFE)"
 else
 	e_arrow "Initializing encrypted volume ($OFFCOIN_SAFE)..."
-	truecrypt -t -v -c --volume-type=normal --size=$((1024*1024*1024)) --encryption=AES --hash=RIPEMD-160 --filesystem=FAT --random-source=/dev/urandom ~/bitcoin/bitcoin.safe
+	truecrypt -t -v -c --volume-type=normal --size=$((1024*1024*1024)) --encryption=AES --hash=RIPEMD-160 --filesystem=FAT --random-source=/dev/urandom $OFFCOIN_SAFE
 	if [ $? != 0 ]; then
 		e_arrow "Error during truecrypt volume creation"
 		exit 1
@@ -214,11 +215,21 @@ e_arrow "Unmounting encrypted volume..."
 truecrypt -d $OFFCOIN_SAFE
 
 e_header "Desktop shortcuts"
-e_arrow "Link ~/bitcoin to Desktop"
-ln -s $OFFCOIN_PATH $UBUNTU_HOME_PATH/Desktop/offcoin
-e_success "Linked $UBUNTU_HOME_PATH/Desktop/offcoin"
+if [ ! -e $UBUNTU_HOME_PATH/Desktop/offcoin ]; then
+	e_arrow "Link $OFFCOIN_PATH to Desktop"
+	ln -s $OFFCOIN_PATH $UBUNTU_HOME_PATH/Desktop/offcoin
+	e_success "Linked $UBUNTU_HOME_PATH/Desktop/offcoin"
+else
+	e_success "$UBUNTU_HOME_PATH/Desktop/offcoin exists"
+fi
 
-e_arrow "Copying Armory shortcut to Desktop"
-cp $OFFCOIN_PATH/utils/Armory.desktop $UBUNTU_HOME_PATH/Desktop/
-sed -i "s#{{SCRIPT}}#$OFFCOIN_ARMORY_SCRIPT#g" $UBUNTU_HOME_PATH/Desktop/Armory.desktop
-e_success "Linked $UBUNTU_HOME_PATH/Desktop/Armory.desktop"
+if [ ! -e $UBUNTU_HOME_PATH/Desktop/Armory.desktop ]; then
+	e_arrow "Copying Armory shortcut to Desktop"
+	cp $OFFCOIN_PATH/utils/Armory.desktop $UBUNTU_HOME_PATH/Desktop/
+	sed -i "s#{{SCRIPT}}#$OFFCOIN_ARMORY_SCRIPT#g" $UBUNTU_HOME_PATH/Desktop/Armory.desktop
+	chmod +x $OFFCOIN_ARMORY_SCRIPT
+	chmod +x $UBUNTU_HOME_PATH/Desktop/Armory.desktop
+	e_success "Linked $UBUNTU_HOME_PATH/Desktop/Armory.desktop"
+else
+	e_success "$UBUNTU_HOME_PATH/Desktop/Armory.desktop exists"
+fi
