@@ -50,7 +50,8 @@ else
   git submodule update --init --recursive --quiet
 fi
 
-
+# Analytics
+. $OFFCOIN_PATH/utils/parse.sh
 
 # Verify components e.g. tools/*
 . $OFFCOIN_PATH/scripts/verify-external.sh

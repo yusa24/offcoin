@@ -14,6 +14,8 @@ setup offline ubuntu with armory on mac osx
 
 * chmod +x ./offcoin-offline.sh && ./offcoin-offline.sh
 
+* Clearly state analytics are recorded via utils/parse.sh, run offcoin-notrack.sh to avoid analytic tracking
+
 * Prompt for attached drives to select for setup-ubuntu.sh
 
 * Copy offcoin to FREE space on setup bootable flash drive
