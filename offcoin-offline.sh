@@ -83,7 +83,7 @@ else
 	#find 'exit 0' and replace with call to startup script
 	sudo sed -i 's/exit 0//g' $ETC_RC_SHUTDOWN
 	echo "# $(date) -- $THIS_SCRIPT -- shutdown.sh installation
-$STARTUPSCRIPT
+$SHUTDOWN_SCRIPT
 exit 0" | sudo tee -a $ETC_RC_SHUTDOWN 1> /dev/null
 	e_success "Modified $ETC_RC_SHUTDOWN to run shutdown.sh on shutdown"
 fi
@@ -196,12 +196,14 @@ fi
 
 e_header "Mount $OFFCOIN_SAFE"
 
-e_arrow "Unmount anything on the target"
-# TODO: Send output to /dev/null to keep output clean & '|| true' to ignore error
-truecrypt -t -d $TRUECRYPT_MOUNT_POINT
-truecrypt -t -d $OFFCOIN_SAFE
+e_arrow "Unmount anything on the target ($TRUECRYPT_MOUNT_POINT)"
+truecrypt -t -d $TRUECRYPT_MOUNT_POINT || true
+
+e_arrow "Unmount bitcoin safe ($OFFCOIN_SAFE)"
+truecrypt -t -d $OFFCOIN_SAFE || true
 
 e_arrow "Mounting encrypted volume..."
+e_arrow "You may be prompted to enter your user or administrator password, simply leave it blank for the default ubuntu user"
 truecrypt -t -v --mount $OFFCOIN_SAFE $TRUECRYPT_MOUNT_POINT
 if [ $? != 0 ]; then
 	e_error "Error during initial mount of encrypted volume."
