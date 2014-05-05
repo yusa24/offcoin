@@ -96,3 +96,10 @@ function VerifyHash()
 
   fi
 }
+
+function GetJSONValue()
+{
+  # $1 : JSON string
+  # $2 : key of value to return
+  echo $1 | grep -Eo "\"$2\":\s?\".*?[^\\]\"" | grep -Eo "[^\"]*[^\"]" | tail -n 1
+}
