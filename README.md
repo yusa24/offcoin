@@ -6,6 +6,18 @@ setup offline ubuntu with armory on mac osx
 
 ## TODO
 
+* For all file copies/installations, check if it exists and rm if it does, then install fresh (prevent old files hanging around)
+
+* Test armory/truecrypt installation on ubuntu
+
+* DO NOT skip if a file exists, unless there is good reason, overwrite it!!
+
+* chmod +x ./offcoin-offline.sh && ./offcoin-offline.sh
+
+* Prompt for attached drives to select for setup-ubuntu.sh
+
+* Copy offcoin to FREE space on setup bootable flash drive
+
 * TODO: copy tools (e.g. vanitygen, bitaddress, etc.) here for user
 * TODO: symlink shortcut to ~/bitcoin on desktop
 * https://en.bitcoin.it/wiki/Vanitygen
@@ -13,7 +25,10 @@ setup offline ubuntu with armory on mac osx
 
 ## Install
 
-
+* 3 options (easiest <-> hardest)
+* Single line, setup thumb drive and copy offcoin to FREE space on bootable drive
+* Single line, copy offcoin to external drive to run on offline ubuntu
+* Download tarball, run locally or copy to external drive to run on offline ubuntu
 
 create and boot into usb flash drive (mac)
 windows just use universal usb installer
